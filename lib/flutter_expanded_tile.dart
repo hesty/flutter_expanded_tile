@@ -32,6 +32,7 @@ class ExpandedTile extends StatefulWidget {
   final ExpandedTileController controller;
   final Curve expansionAnimationCurve;
   final Duration expansionDuration;
+  final VoidCallback? onPressed;
 
   const ExpandedTile({
     key,
@@ -39,6 +40,7 @@ class ExpandedTile extends StatefulWidget {
     required this.title,
     required this.content,
     required this.controller,
+    required this.onPressed,
     // header
     this.headerColor = const Color(0xfffafafa),
     this.headerSplashColor = const Color(0xffeeeeee),
@@ -110,48 +112,51 @@ class _ExpandedTileState extends State<ExpandedTile>
               onTap: () {
                 tileController.toggle();
               },
-              child: Container(
-                padding: widget.headerPadding,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    if (widget.leading != null) widget.leading!,
-                    Expanded(
-                      child: Container(
-                        padding: widget.titlePadding,
-                        alignment: widget.centerHeaderTitle
-                            ? Alignment.center
-                            : Alignment.centerLeft,
-                        child: widget.title,
+              child: InkWell(
+                onTap: widget.onPressed,
+                child: Container(
+                  padding: widget.headerPadding,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      if (widget.leading != null) widget.leading!,
+                      Expanded(
+                        child: Container(
+                          padding: widget.titlePadding,
+                          alignment: widget.centerHeaderTitle
+                              ? Alignment.center
+                              : Alignment.centerLeft,
+                          child: widget.title,
+                        ),
                       ),
-                    ),
-                    Visibility(
-                      visible: widget.showTrailingIcon,
-                      child: Transform.rotate(
-                        angle: widget.checkable
-                            ? 0
-                            : widget.rotateExpandIcon
-                                ? _isExpanded!
-                                    ? math.pi / 2
-                                    : 0
-                                : 0,
-                        child: widget.checkable
-                            ? Checkbox(
-                                checkColor: widget.checkBoxColor,
-                                activeColor: widget.checkBoxActiveColor,
-                                value: checkboxValue,
-                                onChanged: (v) {
-                                  setState(() {
-                                    checkboxValue = v;
-                                    if (widget.onChecked != null)
-                                      return widget.onChecked!(v);
-                                  });
-                                })
-                            : widget.expandIcon ??
-                                Icon(Icons.keyboard_arrow_right),
+                      Visibility(
+                        visible: widget.showTrailingIcon,
+                        child: Transform.rotate(
+                          angle: widget.checkable
+                              ? 0
+                              : widget.rotateExpandIcon
+                                  ? _isExpanded!
+                                      ? math.pi / 2
+                                      : 0
+                                  : 0,
+                          child: widget.checkable
+                              ? Checkbox(
+                                  checkColor: widget.checkBoxColor,
+                                  activeColor: widget.checkBoxActiveColor,
+                                  value: checkboxValue,
+                                  onChanged: (v) {
+                                    setState(() {
+                                      checkboxValue = v;
+                                      if (widget.onChecked != null)
+                                        return widget.onChecked!(v);
+                                    });
+                                  })
+                              : widget.expandIcon ??
+                                  Icon(Icons.keyboard_arrow_right),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
