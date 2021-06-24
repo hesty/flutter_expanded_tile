@@ -32,9 +32,7 @@ class ExpandedTile extends StatefulWidget {
   final ExpandedTileController controller;
   final Curve expansionAnimationCurve;
   final Duration expansionDuration;
-  final VoidCallback? onPressed;
-
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
 
   const ExpandedTile({
     key,
@@ -116,20 +114,6 @@ class _ExpandedTileState extends State<ExpandedTile>
               },
               child: InkWell(
                 onTap: widget.onPressed,
-      child: InkWell(
-        onTap: widget.onPressed,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            //* collapsed row
-            Material(
-              color: widget.headerColor,
-              child: InkWell(
-                splashColor: widget.headerSplashColor,
-                onTap: () {
-                  tileController.toggle();
-                },
                 child: Container(
                   padding: widget.headerPadding,
                   child: Row(
@@ -176,25 +160,25 @@ class _ExpandedTileState extends State<ExpandedTile>
                 ),
               ),
             ),
+          ),
 
-            AnimatedSize(
-              vsync: this,
-              duration: widget.expansionDuration,
-              curve: widget.expansionAnimationCurve,
+          AnimatedSize(
+            vsync: this,
+            duration: widget.expansionDuration,
+            curve: widget.expansionAnimationCurve,
+            child: Container(
               child: Container(
-                child: Container(
-                  child: !_isExpanded!
-                      ? null
-                      : Container(
-                          padding: widget.contentPadding,
-                          color: widget.contentBackgroundColor,
-                          width: double.infinity,
-                          child: widget.content),
-                ),
+                child: !_isExpanded!
+                    ? null
+                    : Container(
+                        padding: widget.contentPadding,
+                        color: widget.contentBackgroundColor,
+                        width: double.infinity,
+                        child: widget.content),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
