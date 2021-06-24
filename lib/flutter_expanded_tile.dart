@@ -33,12 +33,15 @@ class ExpandedTile extends StatefulWidget {
   final Curve expansionAnimationCurve;
   final Duration expansionDuration;
 
+  final VoidCallback? onPressed;
+
   const ExpandedTile({
     key,
     // Requirds
     required this.title,
     required this.content,
     required this.controller,
+    required this.onPressed,
     // header
     this.headerColor = const Color(0xfffafafa),
     this.headerSplashColor = const Color(0xffeeeeee),
@@ -98,82 +101,85 @@ class _ExpandedTileState extends State<ExpandedTile>
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          //* collapsed row
-          Material(
-            color: widget.headerColor,
-            child: InkWell(
-              splashColor: widget.headerSplashColor,
-              onTap: () {
-                tileController.toggle();
-              },
-              child: Container(
-                padding: widget.headerPadding,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    if (widget.leading != null) widget.leading!,
-                    Expanded(
-                      child: Container(
-                        padding: widget.titlePadding,
-                        alignment: widget.centerHeaderTitle
-                            ? Alignment.center
-                            : Alignment.centerLeft,
-                        child: widget.title,
+      child: InkWell(
+        onTap: widget.onPressed,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            //* collapsed row
+            Material(
+              color: widget.headerColor,
+              child: InkWell(
+                splashColor: widget.headerSplashColor,
+                onTap: () {
+                  tileController.toggle();
+                },
+                child: Container(
+                  padding: widget.headerPadding,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      if (widget.leading != null) widget.leading!,
+                      Expanded(
+                        child: Container(
+                          padding: widget.titlePadding,
+                          alignment: widget.centerHeaderTitle
+                              ? Alignment.center
+                              : Alignment.centerLeft,
+                          child: widget.title,
+                        ),
                       ),
-                    ),
-                    Visibility(
-                      visible: widget.showTrailingIcon,
-                      child: Transform.rotate(
-                        angle: widget.checkable
-                            ? 0
-                            : widget.rotateExpandIcon
-                                ? _isExpanded!
-                                    ? math.pi / 2
-                                    : 0
-                                : 0,
-                        child: widget.checkable
-                            ? Checkbox(
-                                checkColor: widget.checkBoxColor,
-                                activeColor: widget.checkBoxActiveColor,
-                                value: checkboxValue,
-                                onChanged: (v) {
-                                  setState(() {
-                                    checkboxValue = v;
-                                    if (widget.onChecked != null)
-                                      return widget.onChecked!(v);
-                                  });
-                                })
-                            : widget.expandIcon ??
-                                Icon(Icons.keyboard_arrow_right),
+                      Visibility(
+                        visible: widget.showTrailingIcon,
+                        child: Transform.rotate(
+                          angle: widget.checkable
+                              ? 0
+                              : widget.rotateExpandIcon
+                                  ? _isExpanded!
+                                      ? math.pi / 2
+                                      : 0
+                                  : 0,
+                          child: widget.checkable
+                              ? Checkbox(
+                                  checkColor: widget.checkBoxColor,
+                                  activeColor: widget.checkBoxActiveColor,
+                                  value: checkboxValue,
+                                  onChanged: (v) {
+                                    setState(() {
+                                      checkboxValue = v;
+                                      if (widget.onChecked != null)
+                                        return widget.onChecked!(v);
+                                    });
+                                  })
+                              : widget.expandIcon ??
+                                  Icon(Icons.keyboard_arrow_right),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
 
-          AnimatedSize(
-            vsync: this,
-            duration: widget.expansionDuration,
-            curve: widget.expansionAnimationCurve,
-            child: Container(
+            AnimatedSize(
+              vsync: this,
+              duration: widget.expansionDuration,
+              curve: widget.expansionAnimationCurve,
               child: Container(
-                child: !_isExpanded!
-                    ? null
-                    : Container(
-                        padding: widget.contentPadding,
-                        color: widget.contentBackgroundColor,
-                        width: double.infinity,
-                        child: widget.content),
+                child: Container(
+                  child: !_isExpanded!
+                      ? null
+                      : Container(
+                          padding: widget.contentPadding,
+                          color: widget.contentBackgroundColor,
+                          width: double.infinity,
+                          child: widget.content),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
